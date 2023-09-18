@@ -1,0 +1,29 @@
+{
+  "name": "ghin",
+  "description": "⛳ An unofficial api wrapper for the Golf Handicap and Information Network (GHIN)",
+  "version": "0.0.0",
+  "author": {
+    "name": "Nate Clark",
+    "url": "https://github.com/n8io"
+  },
+  "engines": {
+    "node": ">=20",
+    "npm": ">=9"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "lint": "tsc"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.26.2",
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "zod": "^3.22.2"
+  }
+}
