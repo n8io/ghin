@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { string } from "../../../models/validation";
+import { string } from "../../../models";
 
 const schemaClientConfig = z.object({
   password: string,
