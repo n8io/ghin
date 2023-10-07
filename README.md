@@ -31,7 +31,7 @@ Here's a quick example of how to use this library:
 ```typescript
 import GhinClient from 'ghin';
 
-// Initialize the GHIN API wrapper
+// Initialize the client
 const ghin = new GhinClient({
   password: process.env.PASSWORD,
   username: process.env.USERNAME,
@@ -39,19 +39,19 @@ const ghin = new GhinClient({
 
 // Get a golfer's handicap
 const ghinNumber = '1234567';
-const handicap = await ghin.golfer.getHandicap(ghinNumber);
+const { handicap_index } = await ghin.handicaps.getOne(ghinNumber);
 
-console.log(`Golfer ${ghinNumber} has a handicap of ${handicap}`);
+console.log(`Golfer ${ghinNumber} has a handicap of ${handicap_index}`);
 ```
 
 ## TODOs
-- [ ] 🔑 Add client authentication
-- [ ] ♻️ Add client token auto-refresh
-- [ ] ✨ Add golfer search
-- [ ] ✨ Add golfer scores fetching
+- [x] 🔑 Add client authentication
+- [x] ♻️ Add client token auto-refresh
+- [x] ✨ Add golfer search
+- [x] ✨ Add golfer scores fetching
+- [x] ✨ Add course handicap fetching
 - [ ] ✨ Add course search
 - [ ] ✨ Add course fetching
-- [ ] ✨ Add course handicap fetching
 
 ## Contributing
 
