@@ -8,6 +8,9 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   build:
+    permissions:
+      contents: write
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,14 +19,14 @@ jobs:
           version: 8
       - uses: actions/setup-node@v3
         with:
-          node-version: 20.x
+          node-version: 18.x
           cache: "pnpm"
       - name: 🔽 Install dependencies
         run: pnpm install --frozen-lockfile
       - name: 📘 Create PR or Publish
         uses: changesets/action@v1
         with:
-          publishScript: pnpm run build
+          publish: pnpm run build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
