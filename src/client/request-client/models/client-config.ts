@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { string } from "../../../models";
+import { schemaCacheClient, string } from "../../../models";
 
 const schemaClientConfig = z.object({
+  cache: schemaCacheClient,
   password: string,
   username: string,
 })
