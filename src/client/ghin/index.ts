@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { number } from "../../models";
-import { GolferSearchRequest, GolferSearchResponse, HandicapResponse, ScoresResponse, ScoresRequest, schemaGolferSearchRequest, schemaGolferSearchResponse, schemaGolferHandicapResponse, schemaScoresResponse, schemaScoresRequest, CoursePlayerHandicapsResponse, CourseHandicapsRequest, schemaCourseHandicapsRequest, GolferCourseHandicapRequest, schemaGolferCourseHandicapRequest, schemaCoursePlayerHandicapsResponse, ClientConfig, schemaClientConfig } from "./models";
+import { ClientConfig, number, schemaClientConfig } from "../../models";
+import { InMemoryCacheClient } from "../in-memory-cache-client";
 import { CLIENT_SOURCE, RequestClient } from "../request-client";
+import { CourseHandicapsRequest, CoursePlayerHandicapsResponse, GolferCourseHandicapRequest, GolferSearchRequest, GolferSearchResponse, HandicapResponse, ScoresRequest, ScoresResponse, schemaCoursePlayerHandicapsResponse, schemaGolferCourseHandicapRequest, schemaGolferHandicapResponse, schemaGolferSearchRequest, schemaGolferSearchResponse, schemaScoresRequest, schemaScoresResponse } from "./models";
 
 const searchParameters = {
   GOLFER_ID: 'golfer_id',
@@ -28,7 +29,10 @@ class GhinClient {
       throw new Error(`Invalid GhinClientConfig: ${results.error.message}`)
     }
 
-    this.httpClient = new RequestClient(results.data)
+    this.httpClient = new RequestClient({
+      ...results.data,
+      cache: results.data.cache ?? new InMemoryCacheClient(),
+    })
     
     this.handicaps = {
       getOne: this.handicapsGetOne.bind(this),

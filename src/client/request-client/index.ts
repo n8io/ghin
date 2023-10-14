@@ -1,5 +1,5 @@
 import { Mutex } from 'async-mutex';
-import { ZodSchema, z } from "zod";
+import { ZodSchema } from "zod";
 import { AccessToken, ClientConfig, LoginResponse, SessionResponse, schemaClientConfig, schemaLoginResponse, schemaSessionResponse } from "./models";
 
 const FIREBASE_SESSION_URL = new URL('https://firebaseinstallations.googleapis.com/v1/projects/ghin-mobile-app/installations')
@@ -111,13 +111,27 @@ class RequestClient {
   }
 
   private async getAccessToken(): Promise<string> {
-    if (this.accessToken && this.sessionToken?.expiresIn && this.sessionToken.expiresIn > new Date()) {
-      return this.accessToken
+    const isSessionValid = Boolean(this.sessionToken?.expiresIn && this.sessionToken.expiresIn > new Date())
+
+    if (isSessionValid) {
+      if (this.accessToken) {
+        return this.accessToken
+      }
+
+      const cachedAccessToken = await this.config.cache.read()
+
+      if (cachedAccessToken) {
+        this.accessToken = cachedAccessToken
+
+        return cachedAccessToken
+      }
     }
 
     const accessToken = await this.refreshAccessToken()
 
     this.accessToken = accessToken
+    
+    await this.config.cache.write(accessToken)
 
     return accessToken
   }
