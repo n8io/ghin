@@ -178,5 +178,5 @@ class GhinClient {
   }
 }
 
-export { GhinClient, ClientConfig as GhinClientConfig };
+export { GhinClient };
 

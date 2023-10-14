@@ -1,6 +1,7 @@
 import { Mutex } from 'async-mutex';
 import { ZodSchema } from "zod";
 import { AccessToken, ClientConfig, LoginResponse, SessionResponse, schemaClientConfig, schemaLoginResponse, schemaSessionResponse } from "./models";
+import jwtDecode, { JwtPayload } from 'jwt-decode';
 
 const FIREBASE_SESSION_URL = new URL('https://firebaseinstallations.googleapis.com/v1/projects/ghin-mobile-app/installations')
 const GOOGLE_API_KEY = 'AIzaSyBxgTOAWxiud0HuaE5tN-5NTlzFnrtyz-I' as const
@@ -110,21 +111,31 @@ class RequestClient {
     return accessToken
   }
 
+  private isAccessTokenValid(accessToken?: string): boolean {
+    if (!accessToken) {
+      return false
+    }
+
+    const decoded = jwtDecode<Pick<JwtPayload, 'exp'>>(accessToken)
+    const expirationDate = new Date(decoded.exp as number * 1_000)
+
+    return expirationDate > new Date()
+  }
+
   private async getAccessToken(): Promise<string> {
-    const isSessionValid = Boolean(this.sessionToken?.expiresIn && this.sessionToken.expiresIn > new Date())
+    const isAccessTokenValid = this.isAccessTokenValid(this.accessToken)
+    
+    if (isAccessTokenValid) {
+      return this.accessToken as string
+    }
+    
+    const cachedAccessToken = await this.config.cache.read()
+    const isCachedTokenValid = this.isAccessTokenValid(cachedAccessToken)
 
-    if (isSessionValid) {
-      if (this.accessToken) {
-        return this.accessToken
-      }
+    if (isCachedTokenValid) {
+      this.accessToken = cachedAccessToken
 
-      const cachedAccessToken = await this.config.cache.read()
-
-      if (cachedAccessToken) {
-        this.accessToken = cachedAccessToken
-
-        return cachedAccessToken
-      }
+      return cachedAccessToken as string
     }
 
     const accessToken = await this.refreshAccessToken()
