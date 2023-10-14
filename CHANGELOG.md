@@ -1,5 +1,11 @@
 # ghin
 
+## 0.4.1
+
+### Patch Changes
+
+- fca6032: fix: 🐛 Properly check cached access token's expiration
+
 ## 0.4.0
 
 ### Minor Changes
