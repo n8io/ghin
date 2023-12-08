@@ -8,18 +8,22 @@
   },
   "engines": {
     "node": ">=18",
-    "npm": ">=9"
+    "pnpm": ">=8",
+    "npm": "please.use.pnpm",
+    "yarn": "please.use.pnpm"
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "packageManager": "pnpm",
   "license": "MIT",
   "scripts": {
     "build": "rm -rf ./dist && tsup src/index.ts --format cjs,esm --dts",
     "changeset": "npx changeset",
     "dev": "pnpm --package=tsx --package=dotenv -s dlx tsx -r dotenv/config playground.ts",
-    "release": "pnpm run build && changeset publish",
-    "lint": "tsc"
+    "lint": "tsc",
+    "preinstall": "npx -y only-allow pnpm || (npx -y rimraf package-lock.json && exit 1)",
+    "release": "pnpm run build && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
