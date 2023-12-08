@@ -32,7 +32,7 @@ const float = z.coerce.number();
 const gender = z.enum(['M', 'F']);
 
 const handicap = z
-  .union([z.number(), z.string(), z.null()])
+  .union([float, z.string(), z.null()])
   .refine((value) => {
     if (typeof value === "number") {
       return true;
