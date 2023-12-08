@@ -1,5 +1,11 @@
 # ghin
 
+## 0.5.1
+
+### Patch Changes
+
+- 6be6085: chore: 💚 Remove requirement for pnpm outside of the library
+
 ## 0.5.0
 
 ### Minor Changes
