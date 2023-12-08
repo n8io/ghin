@@ -1,5 +1,11 @@
 # ghin
 
+## 0.5.2
+
+### Patch Changes
+
+- cd83df6: fix: 🐛 Allow parsing of `NH` as a handicap value
+
 ## 0.5.1
 
 ### Patch Changes
