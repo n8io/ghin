@@ -1,5 +1,14 @@
 import { z } from "zod";
-import { boolean, date, emptyStringToNull, float, gender, number, string } from "../../../../models";
+import {
+  boolean,
+  date,
+  emptyStringToNull,
+  float,
+  gender,
+  handicap,
+  number,
+  string,
+} from "../../../../models";
 
 const schemaGolferStatus = z.enum(['Active', 'Inactive'])
 
@@ -25,7 +34,7 @@ const schemaGolfer = z.object({
   last_name: string,
   association_id: number,
   association_name: string,
-  handicap_index: float.nullable(),
+  handicap_index: handicap,
   club_affiliation_id: number,
   club_id: number,
   club_name: emptyStringToNull,
@@ -35,12 +44,12 @@ const schemaGolfer = z.object({
   hard_cap: boolean,
   has_digital_profile: boolean,
   hi_display: string,
-  hi_value: float,
+  hi_value: handicap,
   is_home_club: boolean,
   low_hi_date: date.nullable(),
   low_hi_display: string,
-  low_hi_value: float,
-  low_hi: float.nullable(),
+  low_hi_value: handicap,
+  low_hi: handicap,
   message_club_authorized: string.nullable(),
   middle_name: emptyStringToNull.nullable().optional(),
   phone_number: emptyStringToNull.nullable().optional(),
@@ -48,9 +57,9 @@ const schemaGolfer = z.object({
   rev_date: date.nullable(),
   soft_cap: boolean,
   state: emptyStringToNull,
-  status: z.enum(['Active', 'Inactive']),
+  status: z.enum(["Active", "Inactive"]),
   suffix: emptyStringToNull.optional(),
-})
+});
 
 type Golfer = z.infer<typeof schemaGolfer>
 

@@ -1,20 +1,24 @@
 import { z } from "zod";
-import { boolean, float, number, string } from "../../../../models";
+import { boolean, handicap, number, string } from "../../../../models";
 import { schemaCoursePercentPlayerHandicap } from "./course-player-handicap";
 
-const schemaGolferHandicapResponse = z.object({
-	golfer: z.object({
-    clubs: z.array(z.object({
-      active: boolean,
-      association_id: number,
-      club_name: string,
-      id: number,
-    })),
-    handicap_index: float.nullable().default(null),
-	})
-}).passthrough()
+const schemaGolferHandicapResponse = z
+  .object({
+    golfer: z.object({
+      clubs: z.array(
+        z.object({
+          active: boolean,
+          association_id: number,
+          club_name: string,
+          id: number,
+        })
+      ),
+      handicap_index: handicap,
+    }),
+  })
+  .passthrough();
 
-type HandicapResponse = z.infer<typeof schemaGolferHandicapResponse>
+type HandicapResponse = z.infer<typeof schemaGolferHandicapResponse>;
 
 const schemaCoursePlayerHandicapsResponse = z.object({
   100: schemaCoursePercentPlayerHandicap,
@@ -37,9 +41,16 @@ const schemaCoursePlayerHandicapsResponse = z.object({
   15: schemaCoursePercentPlayerHandicap,
   10: schemaCoursePercentPlayerHandicap,
   5: schemaCoursePercentPlayerHandicap,
-})
+});
 
-type CoursePlayerHandicapsResponse = z.infer<typeof schemaCoursePlayerHandicapsResponse>
+type CoursePlayerHandicapsResponse = z.infer<
+  typeof schemaCoursePlayerHandicapsResponse
+>;
 
-export { HandicapResponse, CoursePlayerHandicapsResponse, schemaGolferHandicapResponse, schemaCoursePlayerHandicapsResponse };
+export {
+  CoursePlayerHandicapsResponse,
+  HandicapResponse,
+  schemaCoursePlayerHandicapsResponse,
+  schemaGolferHandicapResponse,
+};
 

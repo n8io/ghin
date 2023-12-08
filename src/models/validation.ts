@@ -30,7 +30,39 @@ const emptyString = z.string().trim();
 const emptyStringToNull = emptyString.nullable().transform((value) => value || null);
 const float = z.coerce.number();
 const gender = z.enum(['M', 'F']);
+
+const handicap = z
+  .union([z.number(), z.string(), z.null()])
+  .refine((value) => {
+    if (typeof value === "number") {
+      return true;
+    }
+
+    if (typeof value === "string" && value === "NH") {
+      return true;
+    }
+
+    return false;
+  })
+  .transform((value) => {
+    if (value === "NH") {
+      return null;
+    }
+
+    return value;
+  });
+
 const number = float.int();
 const string = emptyString.min(1);
 
-export { boolean, date, emptyStringToNull, float, gender, monthDay, number, string }
+export {
+  boolean,
+  date,
+  emptyStringToNull,
+  float,
+  gender,
+  handicap,
+  monthDay,
+  number,
+  string,
+};
