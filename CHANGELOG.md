@@ -1,5 +1,11 @@
 # ghin
 
+## 0.5.3
+
+### Patch Changes
+
+- b7af36a: fix: 🐛 Allow parsing handicap value as a float
+
 ## 0.5.2
 
 ### Patch Changes
