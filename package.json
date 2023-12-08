@@ -7,10 +7,7 @@
     "url": "https://github.com/n8io"
   },
   "engines": {
-    "node": ">=18",
-    "pnpm": ">=8",
-    "npm": "please.use.pnpm",
-    "yarn": "please.use.pnpm"
+    "node": ">=18"
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -22,7 +19,6 @@
     "changeset": "npx changeset",
     "dev": "pnpm --package=tsx --package=dotenv -s dlx tsx -r dotenv/config playground.ts",
     "lint": "tsc",
-    "preinstall": "npx -y only-allow pnpm || (npx -y rimraf package-lock.json && exit 1)",
     "release": "pnpm run build && changeset publish"
   },
   "devDependencies": {
