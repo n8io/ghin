@@ -1,7 +1,15 @@
 import { Mutex } from 'async-mutex';
+import { JwtPayload, jwtDecode } from "jwt-decode";
 import { ZodSchema } from "zod";
-import { AccessToken, ClientConfig, LoginResponse, SessionResponse, schemaClientConfig, schemaLoginResponse, schemaSessionResponse } from "./models";
-import jwtDecode, { JwtPayload } from 'jwt-decode';
+import {
+  AccessToken,
+  ClientConfig,
+  LoginResponse,
+  SessionResponse,
+  schemaClientConfig,
+  schemaLoginResponse,
+  schemaSessionResponse,
+} from "./models";
 
 const FIREBASE_SESSION_URL = new URL('https://firebaseinstallations.googleapis.com/v1/projects/ghin-mobile-app/installations')
 const GOOGLE_API_KEY = 'AIzaSyBxgTOAWxiud0HuaE5tN-5NTlzFnrtyz-I' as const

@@ -45,6 +45,7 @@ console.log(`Golfer ${ghinNumber} has a handicap of ${handicap_index}`);
 ```
 
 ## TODOs
+
 - [x] 🔑 Add client authentication
 - [x] ♻️ Add client token auto-refresh
 - [x] 💸 Add configurable cache client
@@ -66,7 +67,6 @@ We welcome contributions from the community. If you'd like to contribute to this
 3. Make your changes and write tests if applicable.
 4. Commit your changes and push them to your fork.
 5. Open a pull request to the main repository.
-
 
 ## License
 
