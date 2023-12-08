@@ -1,5 +1,11 @@
 # ghin
 
+## 0.4.2
+
+### Patch Changes
+
+- b2ee106: ⬆️ Update all dependency versions
+
 ## 0.4.1
 
 ### Patch Changes
