@@ -1,5 +1,11 @@
 # ghin
 
+## 0.5.0
+
+### Minor Changes
+
+- 8d8b27b: chore: 🧹 Make unnecessarily public methods private
+
 ## 0.4.2
 
 ### Patch Changes
