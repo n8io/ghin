@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { boolean, float, number, string } from "../../../../models";
+import { z } from 'zod'
+import { boolean, float, number, string } from '../../../../models'
 
 const schemaHoleDetail = z.object({
   adjusted_gross_score: number,
@@ -19,4 +19,5 @@ const schemaHoleDetail = z.object({
 
 type HoleDetail = z.infer<typeof schemaHoleDetail>
 
-export { HoleDetail, schemaHoleDetail };
+export type { HoleDetail }
+export { schemaHoleDetail }

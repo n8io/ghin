@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { date, emptyStringToNull, float, number } from "../../../../models";
+import { z } from 'zod'
+import { date, emptyStringToNull, float, number } from '../../../../models'
 
 const schemaStatistics = z.object({
   birdies_or_better_percent: float,
@@ -33,4 +33,5 @@ const schemaStatistics = z.object({
 
 type Statistics = z.infer<typeof schemaStatistics>
 
-export { Statistics, schemaStatistics };
+export type { Statistics }
+export { schemaStatistics }

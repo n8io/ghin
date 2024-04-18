@@ -1,7 +1,12 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 const schemaStringOrUndefined = z.union([z.string(), z.undefined()])
-const schemaPromiseOrNonPromiseStringOrUndefined = z.union([z.promise(schemaStringOrUndefined), schemaStringOrUndefined])
+
+const schemaPromiseOrNonPromiseStringOrUndefined = z.union([
+  z.promise(schemaStringOrUndefined),
+  schemaStringOrUndefined,
+])
+
 const schemaPromiseOrNonPromiseVoid = z.union([z.promise(z.void()), z.void()])
 
 const schemaCacheClient = z.object({
@@ -11,4 +16,5 @@ const schemaCacheClient = z.object({
 
 type CacheClient = z.infer<typeof schemaCacheClient>
 
-export { CacheClient, schemaCacheClient };
+export type { CacheClient }
+export { schemaCacheClient }

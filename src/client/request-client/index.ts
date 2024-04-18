@@ -1,26 +1,32 @@
-import { Mutex } from 'async-mutex';
-import { JwtPayload, jwtDecode } from "jwt-decode";
-import { ZodSchema } from "zod";
+import { Mutex } from 'async-mutex'
+import { type JwtPayload, jwtDecode } from 'jwt-decode'
+import type { ZodSchema } from 'zod'
 import {
-  AccessToken,
-  ClientConfig,
-  LoginResponse,
-  SessionResponse,
+  type AccessToken,
+  type ClientConfig,
+  type LoginResponse,
+  type SessionResponse,
   schemaClientConfig,
   schemaLoginResponse,
   schemaSessionResponse,
-} from "./models";
+} from './models'
 
-const FIREBASE_SESSION_URL = new URL('https://firebaseinstallations.googleapis.com/v1/projects/ghin-mobile-app/installations')
+const FIREBASE_SESSION_URL = new URL(
+  'https://firebaseinstallations.googleapis.com/v1/projects/ghin-mobile-app/installations'
+)
+
 const GOOGLE_API_KEY = 'AIzaSyBxgTOAWxiud0HuaE5tN-5NTlzFnrtyz-I' as const
-const DEFAULT_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" as const
+
+const DEFAULT_USER_AGENT =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36' as const
+
 const CLIENT_SOURCE = 'GHINcom'
 
 const SESSION_DEFAULTS = {
-  appId: "1:884417644529:web:47fb315bc6c70242f72650",
-	authVersion: "FIS_v2",
-	fid: "fg6JfS0U01YmrelthLX9Iz",
-	sdkVersion: "w:0.5.7"
+  appId: '1:884417644529:web:47fb315bc6c70242f72650',
+  authVersion: 'FIS_v2',
+  fid: 'fg6JfS0U01YmrelthLX9Iz',
+  sdkVersion: 'w:0.5.7',
 } as const
 
 const FETCH_HEADER_DEFAULTS: RequestInit['headers'] = {
@@ -29,11 +35,11 @@ const FETCH_HEADER_DEFAULTS: RequestInit['headers'] = {
 }
 
 const apiPathnames = {
-  course_handicaps: `/playing_handicaps.json`,
-  golfer: `/search_golfer.json`,
-  golfers_search: `/golfers.json`,
-  login: `/golfer_login.json`,
-  scores: `/scores.json`,
+  course_handicaps: '/playing_handicaps.json',
+  golfer: '/search_golfer.json',
+  golfers_search: '/golfers.json',
+  login: '/golfer_login.json',
+  scores: '/scores.json',
 } as const
 
 type Entity = Exclude<keyof typeof apiPathnames, 'login'>
@@ -55,7 +61,7 @@ const makeAuthHeaders = (accessToken: string) => ({
 
 class RequestClient {
   private accessToken: string | undefined
-  private apiVersion: string = 'v1'
+  private apiVersion = 'v1'
   private config: ClientConfig
   private baseUrl = new URL(`https://api2.ghin.com/api/${this.apiVersion}`)
   private lock: Mutex
@@ -86,14 +92,22 @@ class RequestClient {
     if (!response.ok || response.status >= 400) {
       const body = await response.json()
 
-      throw new Error(`${options.method?.toUpperCase() ?? 'GET'} request failed: ${response.status} ${response.statusText} / ${url.toString()} / ${JSON.stringify(body)}`)
+      throw new Error(
+        `${options.method?.toUpperCase() ?? 'GET'} request failed: ${response.status} ${
+          response.statusText
+        } / ${url.toString()} / ${JSON.stringify(body)}`
+      )
     }
 
     const raw = await response.json()
     const parsed = schema.safeParse(raw)
 
     if (!parsed.success) {
-      throw new Error(`${options.method?.toUpperCase() ?? 'GET'} response failed to parse: ${JSON.stringify(parsed.error)} / ${url.toString()} / ${JSON.stringify(raw)}`)
+      throw new Error(
+        `${options.method?.toUpperCase() ?? 'GET'} response failed to parse: ${JSON.stringify(
+          parsed.error
+        )} / ${url.toString()} / ${JSON.stringify(raw)}`
+      )
     }
 
     return parsed.data
@@ -125,18 +139,18 @@ class RequestClient {
     }
 
     const decoded = jwtDecode<Pick<JwtPayload, 'exp'>>(accessToken)
-    const expirationDate = new Date(decoded.exp as number * 1_000)
+    const expirationDate = new Date((decoded.exp as number) * 1_000)
 
     return expirationDate > new Date()
   }
 
   private async getAccessToken(): Promise<string> {
     const isAccessTokenValid = this.isAccessTokenValid(this.accessToken)
-    
+
     if (isAccessTokenValid) {
       return this.accessToken as string
     }
-    
+
     const cachedAccessToken = await this.config.cache.read()
     const isCachedTokenValid = this.isAccessTokenValid(cachedAccessToken)
 
@@ -149,7 +163,7 @@ class RequestClient {
     const accessToken = await this.refreshAccessToken()
 
     this.accessToken = accessToken
-    
+
     await this.config.cache.write(accessToken)
 
     return accessToken
@@ -164,7 +178,7 @@ class RequestClient {
       token: this.sessionToken.token,
       user: {
         email_or_ghin: this.config.username,
-        password: this.config.password
+        password: this.config.password,
       },
     })
 
@@ -185,7 +199,11 @@ class RequestClient {
     const accessToken = await this.lock.runExclusive(async () => this.getAccessToken())
     const url = toFullApiUrl(this.baseUrl, entity)
     const { headers, searchParams, ...requestInitOptions } = options
-    const actualOptions = { ...requestInitOptions, headers: { ...FETCH_HEADER_DEFAULTS, source: CLIENT_SOURCE, ...makeAuthHeaders(accessToken), ...headers } }
+
+    const actualOptions = {
+      ...requestInitOptions,
+      headers: { ...FETCH_HEADER_DEFAULTS, source: CLIENT_SOURCE, ...makeAuthHeaders(accessToken), ...headers },
+    }
 
     if (searchParams) {
       url.search = searchParams.toString()
@@ -195,5 +213,4 @@ class RequestClient {
   }
 }
 
-export { CLIENT_SOURCE, RequestClient };
-
+export { CLIENT_SOURCE, RequestClient }

@@ -12,24 +12,27 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "packageManager": "pnpm",
+  "packageManager": "pnpm@8.15.6",
   "license": "MIT",
   "scripts": {
     "build": "rm -rf ./dist && tsup src/index.ts --format cjs,esm --dts",
     "changeset": "npx changeset",
     "dev": "pnpm --package=tsx --package=dotenv -s dlx tsx -r dotenv/config playground.ts",
-    "lint": "tsc",
-    "release": "pnpm run build && changeset publish"
+    "format": "biome check --apply ./src",
+    "lint": "biome lint ./src && tsc",
+    "release": "pnpm run build && pnpm update-badge && changeset publish"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.6.4",
     "@changesets/cli": "^2.27.1",
-    "@types/node": "^20.10.4",
-    "dotenv": "^16.3.1",
-    "tsup": "^8.0.1",
-    "typescript": "^5.3.3"
+    "@types/node": "^20.12.7",
+    "dotenv": "^16.4.5",
+    "tsup": "^8.0.2",
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.5"
   },
   "dependencies": {
-    "async-mutex": "^0.4.0",
+    "async-mutex": "^0.5.0",
     "jwt-decode": "^4.0.0",
     "zod": "^3.22.4"
   }

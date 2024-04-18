@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { number, string } from "../../../../models";
+import { z } from 'zod'
+import { number, string } from '../../../../models'
 
 const schemaPlayerCourseHandicap = z.object({
   playing_handicap: number,
@@ -13,4 +13,5 @@ const schemaCoursePercentPlayerHandicap = z.record(string, schemaPlayerCourseHan
 
 type CoursePercentPlayerHandicap = z.infer<typeof schemaCoursePercentPlayerHandicap>
 
-export { CoursePercentPlayerHandicap, CoursePlayerHandicap, schemaCoursePercentPlayerHandicap, schemaPlayerCourseHandicap };
+export type { CoursePlayerHandicap, CoursePercentPlayerHandicap }
+export { schemaCoursePercentPlayerHandicap, schemaPlayerCourseHandicap }
