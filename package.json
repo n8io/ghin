@@ -20,7 +20,7 @@
     "dev": "pnpm --package=tsx --package=dotenv -s dlx tsx -r dotenv/config playground.ts",
     "format": "biome check --apply ./src",
     "lint": "biome lint ./src && tsc",
-    "release": "pnpm run build && pnpm update-badge && changeset publish"
+    "release": "pnpm run build && changeset publish"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.6.4",
