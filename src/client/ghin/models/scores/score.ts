@@ -1,8 +1,8 @@
-import { z } from "zod";
-import { boolean, date, float, gender, monthDay, number, string } from "../../../../models";
-import { schemaScoringAdjustment } from "./adjustment";
-import { schemaHoleDetail } from "./hole-detail";
-import { schemaStatistics } from "./statistics";
+import { z } from 'zod'
+import { boolean, date, float, gender, monthDay, number, string } from '../../../../models'
+import { schemaScoringAdjustment } from './adjustment'
+import { schemaHoleDetail } from './hole-detail'
+import { schemaStatistics } from './statistics'
 
 const schemaScoreStatus = z.enum(['Validated', 'UnderReview'])
 
@@ -53,4 +53,6 @@ const schemaScore = z.object({
 
 type Score = z.infer<typeof schemaScore>
 
-export { Score, schemaScore };
+export { schemaScore }
+export type { Score }
+

@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { float, string } from "../../../../models";
+import { z } from 'zod'
+import { float, string } from '../../../../models'
 
 const schemaScoringAdjustment = z.object({
   display: string,
@@ -9,4 +9,5 @@ const schemaScoringAdjustment = z.object({
 
 type ScoringAdjustment = z.infer<typeof schemaScoringAdjustment>
 
-export { ScoringAdjustment, schemaScoringAdjustment };
+export type { ScoringAdjustment }
+export { schemaScoringAdjustment }

@@ -1,6 +1,6 @@
-import { z } from "zod";
-import { number } from "../../../../models";
-import { CLIENT_SOURCE } from "../../../request-client";
+import { z } from 'zod'
+import { number } from '../../../../models'
+import { CLIENT_SOURCE } from '../../../request-client'
 
 const schemaTeeSetSide = z.enum(['All 18', 'F9', 'B9'])
 
@@ -28,14 +28,19 @@ const schemaGolferCourseHandicapRequest = schemaGolferCourseHandicapBaseRequest.
 type GolferCourseHandicapRequest = z.infer<typeof schemaGolferCourseHandicapRequest>
 
 const schemaCourseHandicapsRequest = z.object({
-  golfers: z.array(schemaGolferCourseHandicapBaseRequest.omit({
-    ghin: true,
-  }).extend({
-    golfer_id: number.optional()
-  })),
+  golfers: z.array(
+    schemaGolferCourseHandicapBaseRequest
+      .omit({
+        ghin: true,
+      })
+      .extend({
+        golfer_id: number.optional(),
+      })
+  ),
   source: z.literal(CLIENT_SOURCE).default(CLIENT_SOURCE).optional(),
 })
 
 type CourseHandicapsRequest = z.infer<typeof schemaCourseHandicapsRequest>
 
-export { CourseHandicapsRequest, GolferCourseHandicapRequest, schemaCourseHandicapsRequest, schemaGolferCourseHandicapRequest, schemaTeeSetSide, TeeSetSide };
+export type { CourseHandicapsRequest, GolferCourseHandicapRequest, TeeSetSide }
+export { schemaCourseHandicapsRequest, schemaGolferCourseHandicapRequest, schemaTeeSetSide }

@@ -1,30 +1,23 @@
-import { z } from "zod";
-import {
-  boolean,
-  date,
-  emptyStringToNull,
-  float,
-  gender,
-  handicap,
-  number,
-  string,
-} from "../../../../models";
+import { z } from 'zod'
+import { boolean, date, emptyStringToNull, gender, handicap, number, string } from '../../../../models'
 
 const schemaGolferStatus = z.enum(['Active', 'Inactive'])
 
-const schemaGolferSearchRequest = z.object({
-  country: string.transform((value) => value?.toUpperCase()),
-  first_name: string,
-  from_ghin: boolean,
-  ghin: number,
-  last_name: string.optional(),
-  order: z.enum(['asc', 'desc']),
-  page: number,
-  per_page: number.max(100),
-  sorting_criteria: z.enum(['country', 'full_name', 'handicap_index', 'state', 'status']),
-  state: string.transform((value) => value?.toUpperCase()),
-  status: schemaGolferStatus,
-}).partial()
+const schemaGolferSearchRequest = z
+  .object({
+    country: string.transform((value) => value?.toUpperCase()),
+    first_name: string,
+    from_ghin: boolean,
+    ghin: number,
+    last_name: string.optional(),
+    order: z.enum(['asc', 'desc']),
+    page: number,
+    per_page: number.max(100),
+    sorting_criteria: z.enum(['country', 'full_name', 'handicap_index', 'state', 'status']),
+    state: string.transform((value) => value?.toUpperCase()),
+    status: schemaGolferStatus,
+  })
+  .partial()
 
 type GolferSearchRequest = z.infer<typeof schemaGolferSearchRequest>
 
@@ -57,17 +50,18 @@ const schemaGolfer = z.object({
   rev_date: date.nullable(),
   soft_cap: boolean,
   state: emptyStringToNull,
-  status: z.enum(["Active", "Inactive"]),
+  status: z.enum(['Active', 'Inactive']),
   suffix: emptyStringToNull.optional(),
-});
+})
 
 type Golfer = z.infer<typeof schemaGolfer>
 
 const schemaGolferSearchResponse = z.object({
-  golfers: z.array(schemaGolfer)
+  golfers: z.array(schemaGolfer),
 })
 
 type GolferSearchResponse = z.infer<typeof schemaGolferSearchResponse>
 
-export { Golfer, GolferSearchRequest, GolferSearchResponse, schemaGolferSearchRequest, schemaGolferSearchResponse };
+export { schemaGolferSearchRequest, schemaGolferSearchResponse }
+export type { Golfer, GolferSearchRequest, GolferSearchResponse }
 

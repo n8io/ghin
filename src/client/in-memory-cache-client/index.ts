@@ -1,9 +1,7 @@
-import { CacheClient } from "../../models";
+import type { CacheClient } from '../../models'
 
 class InMemoryCacheClient implements CacheClient {
   private value: string | undefined = undefined
-
-  constructor() { }
 
   async read() {
     return this.value

@@ -1,6 +1,6 @@
-import { z } from "zod"
-import { string } from "../../../models"
-import { schemaAccessToken } from "./access-token"
+import { z } from 'zod'
+import { string } from '../../../models'
+import { schemaAccessToken } from './access-token'
 
 const schemaSession = z.object({
   appId: string,
@@ -17,4 +17,5 @@ const schemaSessionResponse = z.object({
 
 type SessionResponse = z.infer<typeof schemaSessionResponse>
 
-export { Session, SessionResponse, schemaSession, schemaSessionResponse }
+export type { Session, SessionResponse }
+export { schemaSession, schemaSessionResponse }

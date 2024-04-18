@@ -1,6 +1,6 @@
-import { z } from "zod";
-import { schemaCacheClient } from "./cache-client";
-import { string } from "./validation";
+import { z } from 'zod'
+import { schemaCacheClient } from './cache-client'
+import { string } from './validation'
 
 const schemaClientConfig = z.object({
   cache: schemaCacheClient.optional(),
@@ -10,4 +10,5 @@ const schemaClientConfig = z.object({
 
 type ClientConfig = z.infer<typeof schemaClientConfig>
 
-export { ClientConfig, schemaClientConfig };
+export type { ClientConfig }
+export { schemaClientConfig }
