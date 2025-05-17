@@ -1,7 +1,7 @@
 {
   "name": "ghin",
   "description": "⛳ An unofficial api wrapper for the Golf Handicap and Information Network (GHIN)",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "author": {
     "name": "Nate Clark",
     "url": "https://github.com/n8io"
