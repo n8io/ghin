@@ -11,21 +11,6 @@ const date = z
   })
   .transform((value) => (value ? new Date(value) : undefined))
 
-const monthDay = z
-  .union([z.date(), z.string(), z.null()])
-  .refine((value) => (value ? !Number.isNaN(Date.parse(value.toString())) : true), {
-    message: 'Invalid date',
-  })
-  .transform((value) => {
-    if (typeof value !== 'string') {
-      return value
-    }
-
-    const [month, day] = value.split('/')
-
-    return new Date(`1900-${month}-${day}T00:00Z`)
-  })
-
 const emptyString = z.string().trim()
 const emptyStringToNull = emptyString.nullable().transform((value) => value || null)
 const float = z.coerce.number()
@@ -55,4 +40,29 @@ const handicap = z
 const number = float.int()
 const string = emptyString.min(1)
 
-export { boolean, date, emptyStringToNull, float, gender, handicap, monthDay, number, string }
+const monthDay = string.or(emptyString).transform((value) => {
+  if (!value) {
+    return null
+  }
+
+  const [month, day] = value.split('/')
+
+  return `${month?.toString().padStart(2, '0')}-${day?.toString().padStart(2, '0')}`
+})
+
+const shortDate = z
+  .union([z.date(), z.string(), z.null()])
+  .refine((value) => (value ? !Number.isNaN(Date.parse(value.toString())) : true), {
+    message: 'Invalid date',
+  })
+  .transform((value) => {
+    if (typeof value !== 'string') {
+      return value
+    }
+
+    const [year, month, day] = value.split('-')
+
+    return new Date(`${year}-${month}-${day}T00:00Z`)
+  })
+
+export { boolean, date, emptyStringToNull, float, gender, handicap, monthDay, number, shortDate, string }

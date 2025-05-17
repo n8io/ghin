@@ -15,7 +15,7 @@
       "lineWidth": 120,
       "quoteStyle": "single",
       "semicolons": "asNeeded",
-      "trailingComma": "es5"
+      "trailingCommas": "es5"
     }
   },
   "linter": {

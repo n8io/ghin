@@ -35,7 +35,10 @@ const FETCH_HEADER_DEFAULTS: RequestInit['headers'] = {
 }
 
 const apiPathnames = {
+  course_countries: '/get_countries_and_states.json',
+  course_details: '/crsCourseMethods.asmx/GetCourseDetails.json',
   course_handicaps: '/playing_handicaps.json',
+  course_search: '/crsCourseMethods.asmx/SearchCourses.json',
   golfer: '/search_golfer.json',
   golfers_search: '/golfers.json',
   login: '/golfer_login.json',
@@ -106,7 +109,7 @@ class RequestClient {
       throw new Error(
         `${options.method?.toUpperCase() ?? 'GET'} response failed to parse: ${JSON.stringify(
           parsed.error
-        )} / ${url.toString()} / ${JSON.stringify(raw)}`
+        )} / ${url.toString()}`
       )
     }
 
