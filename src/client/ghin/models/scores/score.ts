@@ -4,7 +4,48 @@ import { schemaScoringAdjustment } from './adjustment'
 import { schemaHoleDetail } from './hole-detail'
 import { schemaStatistics } from './statistics'
 
-const schemaScoreStatus = z.enum(['Validated', 'UnderReview'])
+type Prettify<T> = {
+  [K in keyof T]: T[K]
+} & {}
+
+const rawScoreTypes = ['A', 'C', 'E', 'H', 'N', 'P', 'T'] as const
+const schemaRawScoreTypes = z.enum(rawScoreTypes)
+type RawScoreType = z.infer<typeof schemaRawScoreTypes>
+
+const scoreTypes = ['AWAY', 'COMPETITION', 'EXCEPTIONAL', 'HOME', '9_HOLE_ROUNDS', 'PENALTY', 'TOURNAMENT'] as const
+const schemaScoreType = z.enum(scoreTypes)
+type ScoreType = z.infer<typeof schemaScoreType>
+
+const scoreTypesMap: Record<RawScoreType, ScoreType> = {
+  A: 'AWAY',
+  C: 'COMPETITION',
+  E: 'EXCEPTIONAL',
+  H: 'HOME',
+  N: '9_HOLE_ROUNDS',
+  P: 'PENALTY',
+  T: 'TOURNAMENT',
+} as const
+
+// @ts-expect-error ???
+const schemaScoreTypeWithTransform: z.ZodType<RawScoreType, z.ZodTypeDef, ScoreType> = schemaRawScoreTypes.transform(
+  (value) => scoreTypesMap[value]
+)
+
+const scoreStatuses = ['VALIDATED', 'UNDER_REVIEW'] as const
+const schemaScoreStatus = z.enum(scoreStatuses)
+type ScoreStatus = z.infer<typeof schemaScoreStatus>
+
+const rawScoreStatuses = ['Validated', 'UnderReview'] as const
+const schemaRawScoreStatus = z.enum(rawScoreStatuses)
+
+const scoreStatusesMap = {
+  Validated: 'VALIDATED',
+  UnderReview: 'UNDER_REVIEW',
+} as const
+
+const schemaScoreStatusWithTransform = schemaRawScoreStatus.transform(
+  (value) => scoreStatusesMap[value as keyof typeof scoreStatusesMap]
+)
 
 const schemaScore = z.object({
   adjusted_gross_score: number,
@@ -31,7 +72,7 @@ const schemaScore = z.object({
   number_of_played_holes: number,
   order_number: number,
   parent_id: number.nullable(),
-  pcc: number,
+  pcc: float,
   penalty_method: string.nullable(),
   penalty_type: string.nullable(),
   penalty: boolean.optional(),
@@ -41,18 +82,17 @@ const schemaScore = z.object({
   score_day_order: number,
   score_type_display_full: string,
   score_type_display_short: string,
-  score_type: string,
+  score_type: schemaScoreTypeWithTransform,
   season_end_date_at: monthDay,
   season_start_date_at: monthDay,
   slope_rating: float,
   statistics: schemaStatistics.nullable().optional(),
-  status: schemaScoreStatus,
+  status: schemaScoreStatusWithTransform,
   unadjusted_differential: float,
   used: boolean,
 })
 
-type Score = z.infer<typeof schemaScore>
+type Score = Prettify<z.infer<typeof schemaScore>>
 
-export { schemaScore }
-export type { Score }
-
+export { rawScoreTypes, schemaScore }
+export type { Score, ScoreType, ScoreStatus }

@@ -3,15 +3,26 @@ import { type ClientConfig, number, schemaClientConfig } from '../../models'
 import { InMemoryCacheClient } from '../in-memory-cache-client'
 import { CLIENT_SOURCE, RequestClient } from '../request-client'
 import {
+  type CourseCountriesResponse,
+  type CourseCountry,
+  type CourseDetailsRequest,
+  type CourseDetailsResponse,
   type CourseHandicapsRequest,
   type CoursePlayerHandicapsResponse,
+  type CourseSearchRequest,
+  type CourseSearchResponse,
   type GolferCourseHandicapRequest,
   type GolferSearchRequest,
   type GolferSearchResponse,
   type HandicapResponse,
   type ScoresRequest,
   type ScoresResponse,
+  schemaCourseCountriesResponse,
+  schemaCourseDetailsRequest,
+  schemaCourseDetailsResponse,
   schemaCoursePlayerHandicapsResponse,
+  schemaCourseSearchRequest,
+  schemaCourseSearchResponse,
   schemaGolferCourseHandicapRequest,
   schemaGolferHandicapResponse,
   schemaGolferSearchRequest,
@@ -28,15 +39,21 @@ const searchParameters = {
 class GhinClient {
   private httpClient: RequestClient
 
-  public handicaps: {
-    getOne: (ghinNumber: number) => Promise<HandicapResponse['golfer']>
-    getCoursePlayerHandicaps: (requests: GolferCourseHandicapRequest[]) => Promise<CoursePlayerHandicapsResponse>
+  courses: {
+    getCountries: () => Promise<CourseCountry[]>
+    getDetails: (request: CourseDetailsRequest) => Promise<CourseDetailsResponse>
+    search: (request: CourseSearchRequest) => Promise<CourseSearchResponse['courses']>
   }
 
-  public golfers: {
+  golfers: {
     getOne: (ghinNumber: number) => Promise<GolferSearchResponse['golfers'][number] | undefined>
     getScores: (ghinNumber: number, request?: ScoresRequest) => Promise<ScoresResponse>
     search: (request: GolferSearchRequest) => Promise<GolferSearchResponse['golfers']>
+  }
+
+  handicaps: {
+    getOne: (ghinNumber: number) => Promise<HandicapResponse['golfer']>
+    getCoursePlayerHandicaps: (requests: GolferCourseHandicapRequest[]) => Promise<CoursePlayerHandicapsResponse>
   }
 
   constructor(config: ClientConfig) {
@@ -51,6 +68,12 @@ class GhinClient {
       cache: results.data.cache ?? new InMemoryCacheClient(),
     })
 
+    this.courses = {
+      getCountries: this.coursesGetCountries.bind(this),
+      getDetails: this.courseGetDetails.bind(this),
+      search: this.courseSearch.bind(this),
+    }
+
     this.handicaps = {
       getOne: this.handicapsGetOne.bind(this),
       getCoursePlayerHandicaps: this.handicapsGetCoursePlayerHandicaps.bind(this),
@@ -63,11 +86,62 @@ class GhinClient {
     }
   }
 
+  private async coursesGetCountries(): Promise<CourseCountry[]> {
+    const searchParams = new URLSearchParams([['source', CLIENT_SOURCE]])
+    const options: Parameters<typeof this.httpClient.fetch>[0]['options'] = { searchParams }
+
+    const { countries } = await this.httpClient.fetch<CourseCountriesResponse>({
+      entity: 'course_countries',
+      options,
+      schema: schemaCourseCountriesResponse,
+    })
+
+    return countries
+  }
+
+  private async courseGetDetails(request: CourseDetailsRequest): Promise<CourseDetailsResponse> {
+    const validRequest = schemaCourseDetailsRequest.parse(request)
+    const searchParams = new URLSearchParams([['source', CLIENT_SOURCE]])
+
+    for (const [key, value] of Object.entries(validRequest)) {
+      searchParams.set(key, value.toString())
+    }
+
+    const options: Parameters<typeof this.httpClient.fetch>[0]['options'] = { searchParams }
+
+    return this.httpClient.fetch<CourseDetailsResponse>({
+      entity: 'course_details',
+      options,
+      schema: schemaCourseDetailsResponse,
+    })
+  }
+
+  private async courseSearch(request: CourseSearchRequest): Promise<CourseSearchResponse['courses']> {
+    const validRequest = schemaCourseSearchRequest.parse(request)
+    const searchParams = new URLSearchParams([['source', CLIENT_SOURCE]])
+
+    for (const [key, value] of Object.entries(validRequest)) {
+      searchParams.set(key, value.toString())
+    }
+
+    const options: Parameters<typeof this.httpClient.fetch>[0]['options'] = { searchParams }
+
+    const { courses } = await this.httpClient.fetch<CourseSearchResponse>({
+      entity: 'course_search',
+      options,
+      schema: schemaCourseSearchResponse,
+    })
+
+    return courses
+  }
+
   private async handicapsGetOne(ghin: number): Promise<HandicapResponse['golfer']> {
     const ghinNumber = number.parse(ghin)
-    const searchParams = new URLSearchParams()
 
-    searchParams.set(searchParameters.GOLFER_ID, ghinNumber.toString())
+    const searchParams = new URLSearchParams([
+      ['source', CLIENT_SOURCE],
+      ['ghin', ghinNumber.toString()],
+    ])
 
     const options: Parameters<typeof this.httpClient.fetch>[0]['options'] = {
       searchParams,
@@ -115,7 +189,7 @@ class GhinClient {
 
   private async golfersSearch(request: GolferSearchRequest): Promise<GolferSearchResponse['golfers']> {
     const { ghin, ...params } = schemaGolferSearchRequest.parse(request)
-    const searchParams = new URLSearchParams()
+    const searchParams = new URLSearchParams([['source', CLIENT_SOURCE]])
 
     const searchDefaults = {
       from_ghin: true,
@@ -148,18 +222,19 @@ class GhinClient {
 
   private async golfersGetOne(ghinNumber: number): Promise<GolferSearchResponse['golfers'][number] | undefined> {
     const ghin = number.parse(ghinNumber)
-    const [golfer] = await this.golfersSearch({ ghin: ghin, status: 'Active' })
+    const results = await this.golfersSearch({ ghin: ghin, status: 'Active' })
 
-    return golfer
+    return results.find((golfer) => golfer.status === 'Active')
   }
 
   private async golfersGetScores(ghinNumber: number, request?: ScoresRequest): Promise<ScoresResponse> {
     const validRequest = schemaScoresRequest.parse(request) ?? {}
     const ghin = number.parse(ghinNumber)
-    const searchParams = new URLSearchParams()
 
-    searchParams.set(searchParameters.GOLFER_ID, ghin.toString())
-    searchParams.set(searchParameters.SOURCE, CLIENT_SOURCE)
+    const searchParams = new URLSearchParams([
+      [searchParameters.GOLFER_ID, ghin.toString()],
+      ['source', CLIENT_SOURCE],
+    ])
 
     for (const [key, value] of Object.entries(validRequest)) {
       if (value === null) {

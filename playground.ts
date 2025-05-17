@@ -15,7 +15,7 @@ const fn = async () => {
     username: process.env.GHIN_USERNAME as string,
   })
 
-  console.log(await ghinClient.handicaps.getOne(Number(process.env.GHIN_USERNAME as string)))
+  console.dir(await ghinClient.golfers.getOne(Number(process.env.GHIN_USERNAME)), { depth: null })
 }
 
 fn()

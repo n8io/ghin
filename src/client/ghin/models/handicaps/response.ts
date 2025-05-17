@@ -2,17 +2,17 @@ import { z } from 'zod'
 import { boolean, handicap, number, string } from '../../../../models'
 import { schemaCoursePercentPlayerHandicap } from './course-player-handicap'
 
+const schemaGolferHandicapClub = z.object({
+  active: boolean,
+  association_id: number,
+  club_name: string,
+  id: number,
+})
+
 const schemaGolferHandicapResponse = z
   .object({
     golfer: z.object({
-      clubs: z.array(
-        z.object({
-          active: boolean,
-          association_id: number,
-          club_name: string,
-          id: number,
-        })
-      ),
+      clubs: z.array(schemaGolferHandicapClub),
       handicap_index: handicap,
     }),
   })
@@ -47,4 +47,3 @@ type CoursePlayerHandicapsResponse = z.infer<typeof schemaCoursePlayerHandicapsR
 
 export { schemaCoursePlayerHandicapsResponse, schemaGolferHandicapResponse }
 export type { CoursePlayerHandicapsResponse, HandicapResponse }
-

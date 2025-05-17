@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { boolean, date, emptyStringToNull, gender, handicap, number, string } from '../../../../models'
 
-const schemaGolferStatus = z.enum(['Active', 'Inactive'])
+const schemaGolferStatus = z.enum(['Active', 'Inactive']).transform((value) => value.toUpperCase())
 
 const schemaGolferSearchRequest = z
   .object({
@@ -64,4 +64,3 @@ type GolferSearchResponse = z.infer<typeof schemaGolferSearchResponse>
 
 export { schemaGolferSearchRequest, schemaGolferSearchResponse }
 export type { Golfer, GolferSearchRequest, GolferSearchResponse }
-

@@ -18,7 +18,7 @@
     "build": "rm -rf ./dist && tsup src/index.ts --format cjs,esm --dts",
     "changeset": "npx changeset",
     "dev": "pnpm --package=tsx --package=dotenv -s dlx tsx -r dotenv/config playground.ts",
-    "format": "biome check --apply ./src",
+    "format": "biome check --write ./src",
     "lint": "biome lint ./src && tsc",
     "release": "pnpm run build && changeset publish"
   },
